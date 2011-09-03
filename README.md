@@ -1,4 +1,4 @@
-Sipeable let you create scrollable area for touch-based device with horizontal snap, keeping vertical scrolling free.
+Swipeable let you create scrollable area for touch-based device with horizontal snap, keeping vertical scrolling free.
 
 How to use
 ----------
