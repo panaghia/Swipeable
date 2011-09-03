@@ -1,14 +1,17 @@
+// author Sergio Panagia  http://panaghia.it
+// v0.1
+// This is Swipeable JS
 
 (function()
 {
-Swipeable = function(scrollerId)
+Swipeable = function(scrollerId, options)
 {
-	this.scroller = document.getElementById(scrollerId);
-	
+	this.scroller = document.getElementById(scrollerId);	
 	this.singleWidth = 0;
-	this.totalWidth = 0;   
-	
-	this.slotsNumber = 0;
+	this.totalWidth = 0;   	
+	this.slotsNumber = 0;  
+	this.options = options; 
+	this.currentPage = 0;
 		
 	this.calculateContainerWidth();
 	this.attachEvents();
@@ -17,7 +20,7 @@ Swipeable = function(scrollerId)
 
 Swipeable.prototype.calculateContainerWidth = function()
 {
-	var children = this.scroller.querySelectorAll('.risultatiPage');  
+	var children = this.scroller.querySelectorAll('._snap');  
 	this.singleWidth = getComputedStyle(children[0], "").getPropertyValue("width").match(/(\d*\.?\d*)(.*)/)[1];
 	this.totalWidth = this.singleWidth * children.length;  
 	this.slotsNumber = children.length;
@@ -88,17 +91,20 @@ Swipeable.prototype.attachEvents = function()
 		}
 		
 		var finalDelta = xPos - endX; 
-		console.log('current offset: '+off);
+		//console.log('current offset: '+off);
 		if(finalDelta < 0 && !lock)
 		{
 			if(finalDelta < -50 && off < 0)
 			{
 				scroller.style.webkitTransition = 'all 200ms ease-in-out';
 				off+=parseInt(that.singleWidth);
-				console.log('new offset < 0: '+off);
+				//console.log('new offset < 0: '+off);
 				scroller.style.webkitTransform = 'translate3d('+off+'px, 0, 0)';   			
 				absX = off;
-				startX = 0;      			 			
+				startX = 0;                        
+				
+				that.currentPage--;
+				that.options.onSwipeEnd.call(that);    			 			
 			}
 			else
 				restoreState();
@@ -110,10 +116,13 @@ Swipeable.prototype.attachEvents = function()
 			{
 				scroller.style.webkitTransition = 'all 200ms ease-in-out';
 				off-=parseInt(that.singleWidth);
-				console.log('new offset >=0: '+off);
+				//console.log('new offset >=0: '+off);
 				scroller.style.webkitTransform = 'translate3d('+off+'px, 0, 0)';     			
 				absX = off; 
-				startX = 0; 	
+				startX = 0;     
+				
+				that.currentPage++;
+				that.options.onSwipeEnd.call(that);  	
 			}
 			else
 				restoreState();
