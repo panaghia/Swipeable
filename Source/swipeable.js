@@ -1,6 +1,9 @@
-// author Sergio Panagia  http://panaghia.it
-// v0.1
-// This is Swipeable JS
+/*
+this is swipeable JS
+
+author Sergio Panagia (http://panaghia.it)
+MIT STYLE LICENSE
+*/
 
 (function()
 {
@@ -27,6 +30,14 @@ Swipeable.prototype.calculateContainerWidth = function()
 	this.scroller.style.width = this.totalWidth+"px";
 }
 
+Swipeable.prototype.snap2Page = function(pageNumber)
+{
+	var newOff = -(pageNumber * this.singleWidth);
+	this.scroller.style.webkitTransform = 'translate3d('+newOff+'px, 0, 0)';
+	this.currentPage = pageNumber;
+	this.options.onSwipeEnd.call(this);
+}
+
 
 Swipeable.prototype.attachEvents = function()
 {
@@ -37,7 +48,7 @@ Swipeable.prototype.attachEvents = function()
 	var deltaX = 0;
 	var deltaY = 0;	
 	var endX = 0;
-	var startX = 0;
+	var startX = 0;// this.currentPage * this.singleWidth;
 	var dir = 0; 
 	
 	var off = 0;
@@ -54,9 +65,14 @@ Swipeable.prototype.attachEvents = function()
 		yPos = e.touches[0].pageY;
 		deltaX = e.touches[0].pageY;
 		xPos = startX;
-		deltaX = e.touches[0].pageX - startX;
+		deltaX = e.touches[0].pageX - startX; 
+		//console.log(e.touches[0].pageX+" "+startX);
 		scroller.addEventListener('touchmove', touchMove, false);
-		scroller.addEventListener('touchend', touchEnd, false);
+		scroller.addEventListener('touchend', touchEnd, false); 
+		 
+		//recalculate absx and off because of snap2page evenience
+		absX = off = -(that.singleWidth*(that.currentPage));
+			
 	}   
 	function touchMove(e)
 	{
@@ -68,7 +84,8 @@ Swipeable.prototype.attachEvents = function()
 		
 		Math.abs(deltaY) > (Math.abs(delta) + 2) ? lock = true : lock = false;		 
 		delta = parseInt(delta/1.5);
-		startX = endX = delta;
+		startX = endX = delta;     
+		
 		if(!lock)
 		{ 		
 			scroller.style.webkitTransition = '';
