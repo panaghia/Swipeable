@@ -26,10 +26,11 @@ you can grab on-swipe-end event with the following syntax:
 		{
 			console.log(this.currentPage);
 		}
-	})  
+	})
+	  
 It's possibile to force snap via a prototype function (onSwipeEnd will be called, no matter what):
-	sw.snap2Page(0);
-
+	
+	swp.snap2Page(0);
 	
 Copyright
 ---------
