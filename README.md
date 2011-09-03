@@ -28,7 +28,8 @@ you can grab on-swipe-end event with the following syntax:
 		}
 	})  
 It's possibile to force snap via a prototype function (onSwipeEnd will be called, no matter what):
-   sw.snap2Page(0);
+	sw.snap2Page(0);
+
 	
 Copyright
 ---------
