@@ -15,6 +15,8 @@ Swipeable = function(scrollerId, options)
 	this.slotsNumber = 0;  
 	this.options = options; 
 	this.currentPage = 0;
+	
+	this.lock = false;
 		
 	this.calculateContainerWidth();
 	this.attachEvents();
@@ -52,8 +54,9 @@ Swipeable.prototype.attachEvents = function()
 	var dir = 0; 
 	
 	var off = 0;
+   
+  
 	
-	var lock = false;
 	
 	var scroller = this.scroller;
 
@@ -71,22 +74,24 @@ Swipeable.prototype.attachEvents = function()
 		scroller.addEventListener('touchend', touchEnd, false); 
 		 
 		//recalculate absx and off because of snap2page evenience
-		absX = off = -(that.singleWidth*(that.currentPage));
-			
+		absX = off = -(that.singleWidth*(that.currentPage)); 
+		that.lock = false;   		
 	}   
 	function touchMove(e)
 	{
 		deltaY = e.touches[0].pageY - yPos;    	
 		var delta = e.touches[0].pageX - deltaX;
-		/*
-		console.log("deltay:"+Math.abs(deltaY)+" deltax:"+Math.abs(delta));
-		console.log(lock);      */
+
 		
-		Math.abs(deltaY) > (Math.abs(delta) + 2) ? lock = true : lock = false;		 
+		if(Math.abs(delta) < 25)
+			that.lock = true;
+		else
+		    that.lock = false;
+			
 		delta = parseInt(delta/1.5);
 		startX = endX = delta;     
 		
-		if(!lock)
+		if(!that.lock)
 		{ 		
 			scroller.style.webkitTransition = '';
 			scroller.style.webkitTransform = 'translate3d('+(parseInt(absX)+delta)+'px, 0, 0)';  					
@@ -94,12 +99,15 @@ Swipeable.prototype.attachEvents = function()
 		else
 			delta = 0;
 		scroller.removeEventListener('touchmove', this); 
-		scroller.removeEventListener('touchend', this);
+		scroller.removeEventListener('touchend', this);   
+		
+		console.log('deltax:'+delta);
 		       
 		    	
 	}
 	function touchEnd(e)
-	{ 
+	{                   
+	   	
 		function restoreState()
 		{
 		    scroller.style.webkitTransition = 'all 300ms ease-in-out';
@@ -109,7 +117,7 @@ Swipeable.prototype.attachEvents = function()
 		
 		var finalDelta = xPos - endX; 
 		//console.log('current offset: '+off);
-		if(finalDelta < 0 && !lock)
+		if(finalDelta < 0 && !that.lock)
 		{
 			if(finalDelta < -50 && off < 0)
 			{
@@ -126,7 +134,7 @@ Swipeable.prototype.attachEvents = function()
 			else
 				restoreState();
 		}
-		else if(finalDelta > 0)
+		else if(finalDelta > 0 && !that.lock)
 		{                                 
 			var deadline = (that.slotsNumber-2) * that.singleWidth;
 			if(finalDelta > 50 && off >= -deadline)
@@ -143,7 +151,8 @@ Swipeable.prototype.attachEvents = function()
 			}
 			else
 				restoreState();
-		}      	
+		}      
+		that.lock = false;	
 	}	
 }   
 
