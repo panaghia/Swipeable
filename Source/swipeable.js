@@ -100,10 +100,6 @@ Swipeable.prototype.attachEvents = function()
 			delta = 0;
 		scroller.removeEventListener('touchmove', this); 
 		scroller.removeEventListener('touchend', this);   
-		
-		console.log('deltax:'+delta);
-		       
-		    	
 	}
 	function touchEnd(e)
 	{                   
